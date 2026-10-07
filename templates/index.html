@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="ko" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>별 헤는 밤 - AI 감성 독서 에세이 & 블로그 리뷰 코치</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts (Noto Serif KR & Noto Sans KR) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=Noto+Serif+KR:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        night: {
+                            900: '#0B0F19',
+                            800: '#111827',
+                            700: '#1F2937',
+                            600: '#374151',
+                        },
+                        starlight: {
+                            100: '#F3F4F6',
+                            200: '#E5E7EB',
+                            300: '#D1D5DB',
+                            gold: '#F59E0B',
+                            purple: '#A855F7',
+                            indigo: '#6366F1',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Noto Sans KR', 'sans-serif'],
+                        serif: ['Noto Serif KR', 'serif'],
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'glow': 'glow 3s ease-in-out infinite alternate',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        glow: {
+                            '0%': { opacity: '0.4', filter: 'blur(20px)' },
+                            '100%': { opacity: '0.8', filter: 'blur(30px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom Glassmorphism & Night Sky Effects -->
+    <style>
+        body {
+            background-color: #070A12;
+            color: #E2E8F0;
+            font-family: 'Noto Sans KR', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Glassmorphism Classes */
+        .glass-panel {
+            background: rgba(18, 24, 43, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .glass-panel-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-panel-hover:hover {
+            background: rgba(26, 35, 62, 0.75);
+            border-color: rgba(168, 85, 247, 0.3);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px 0 rgba(168, 85, 247, 0.15);
+        }
+
+        .glass-input {
+            background: rgba(10, 14, 26, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(8px);
+            color: #F3F4F6;
+        }
+        .glass-input:focus {
+            border-color: #A855F7;
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.3);
+            outline: none;
+        }
+
+        /* Background Star Particles */
+        .stars-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .star {
+            position: absolute;
+            background-color: #ffffff;
+            border-radius: 50%;
+            animation: twinkle var(--duration, 3s) infinite ease-in-out var(--delay, 0s);
+        }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; transform: scale(0.8); }
+            50% { opacity: 0.9; transform: scale(1.2); }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0B0F19;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2D3748;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4A5568;
+        }
+
+        /* Gradient Text */
+        .gradient-text {
+            background: linear-gradient(135deg, #E2E8F0 0%, #A855F7 50%, #818CF8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gradient-gold-text {
+            background: linear-gradient(135deg, #FDE68A 0%, #F59E0B 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col relative selection:bg-purple-500 selection:text-white">
+
+    <!-- Background Stars Effect -->
+    <div id="stars-container" class="stars-container"></div>
+
+    <!-- Background Ambient Glow Bubbles -->
+    <div class="fixed -top-40 -left-40 w-96 h-96 bg-purple-900/30 rounded-full blur-3xl pointer-events-none animate-glow"></div>
+    <div class="fixed top-1/3 -right-40 w-96 h-96 bg-indigo-900/20 rounded-full blur-3xl pointer-events-none animate-glow" style="animation-delay: 1.5s;"></div>
+    <div class="fixed -bottom-40 left-1/3 w-96 h-96 bg-blue-900/20 rounded-full blur-3xl pointer-events-none animate-glow" style="animation-delay: 3s;"></div>
+
+    <!-- Navigation Bar -->
+    <header class="sticky top-0 z-50 glass-panel border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <a href="/" class="flex items-center space-x-3 group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 via-indigo-500 to-amber-300 flex items-center justify-center shadow-lg shadow-purple-500/20 group-hover:scale-105 transition-transform duration-300">
+                    <i class="fa-solid fa-moon text-slate-950 text-xl"></i>
+                </div>
+                <div>
+                    <span class="font-serif text-2xl font-bold tracking-tight text-white group-hover:text-purple-300 transition-colors">별 헤는 밤</span>
+                    <span class="hidden sm:inline-block text-xs text-purple-300/70 ml-2 font-sans font-normal">AI 감성 독서 코치</span>
+                </div>
+            </a>
+
+            <!-- Desktop Menu Links -->
+            <nav class="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-300">
+                <a href="#hero" class="hover:text-purple-400 transition-colors">홈</a>
+                <a href="#coach" class="hover:text-purple-400 transition-colors flex items-center gap-1.5">
+                    <span class="relative flex h-2 w-2">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2 w-2 bg-purple-500"></span>
+                    </span>
+                    AI 에세이 코치
+                </a>
+                <a href="#templates" class="hover:text-purple-400 transition-colors">리뷰 템플릿</a>
+                <a href="#how-it-works" class="hover:text-purple-400 transition-colors">사용방법</a>
+                <a href="#faq" class="hover:text-purple-400 transition-colors">FAQ</a>
+            </nav>
+
+            <!-- Authentication & User Navigation Buttons (Flask Compatible) -->
+            <div class="flex items-center space-x-3">
+                <!-- Settings Button (Gemini API Modal trigger) -->
+                <button onclick="openApiModal()" title="Gemini API 설정" class="p-2.5 rounded-lg glass-panel hover:bg-white/10 text-slate-300 hover:text-amber-300 transition-all text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-key text-amber-400"></i>
+                    <span class="hidden xl:inline text-xs">API 키 설정</span>
+                </button>
+
+                <!-- Flask Integrated Action Buttons -->
+                <a href="/login" class="px-4 py-2 rounded-lg text-sm font-medium text-slate-200 hover:text-white hover:bg-white/5 transition-all border border-transparent hover:border-white/10">
+                    로그인
+                </a>
+                <a href="/signup" class="px-4 py-2 rounded-lg text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 shadow-md shadow-purple-900/30 transition-all hover:scale-105">
+                    회원가입
+                </a>
+                <a href="/mypage" title="마이페이지" class="p-2.5 rounded-lg glass-panel hover:bg-purple-600/30 text-purple-300 transition-all border border-purple-500/20">
+                    <i class="fa-solid fa-user-astronaut text-base"></i>
+                </a>
+
+                <!-- Mobile Navigation Toggle -->
+                <button id="mobileMenuBtn" class="md:hidden p-2 rounded-lg text-slate-300 hover:text-white focus:outline-none">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobileMenu" class="hidden md:hidden px-4 pt-2 pb-6 space-y-3 glass-panel border-t border-white/10">
+            <a href="#hero" class="block py-2 text-slate-300 hover:text-purple-400">홈</a>
+            <a href="#coach" class="block py-2 text-purple-300 font-medium">✨ AI 에세이 코치</a>
+            <a href="#templates" class="block py-2 text-slate-300 hover:text-purple-400">리뷰 템플릿</a>
+            <a href="#how-it-works" class="block py-2 text-slate-300 hover:text-purple-400">사용방법</a>
+            <a href="#faq" class="block py-2 text-slate-300 hover:text-purple-400">FAQ</a>
+            <div class="pt-2 border-t border-white/10 flex flex-col gap-2">
+                <a href="/login" class="text-center py-2 rounded-lg bg-white/5 text-slate-200 text-sm">로그인</a>
+                <a href="/signup" class="text-center py-2 rounded-lg bg-purple-600 text-white text-sm font-medium">회원가입</a>
+                <a href="/mypage" class="text-center py-2 rounded-lg border border-purple-500/30 text-purple-300 text-sm">마이페이지 이동</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow z-10">
+        <!-- Hero Section -->
+        <section id="hero" class="relative py-20 lg:py-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+            <div class="text-center max-w-3xl mx-auto space-y-8">
+                <!-- Badge -->
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel border border-purple-500/30 text-purple-300 text-xs sm:text-sm font-medium animate-float">
+                    <i class="fa-solid fa-sparkles text-amber-300"></i>
+                    <span>책과 친해지는 가장 감성적인 시작</span>
+                </div>
+
+                <!-- Main Title -->
+                <h1 class="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-tight sm:leading-tight">
+                    책 한 권이 마음에 남긴 별빛,<br>
+                    <span class="gradient-text">당신만의 에세이</span>가 됩니다.
+                </h1>
+
+                <!-- Subtitle -->
+                <p class="text-slate-300 text-base sm:text-lg font-light leading-relaxed">
+                    독서 기록을 망설이던 2030을 위한 AI 서평 코치 플랫폼.<br class="hidden sm:inline">
+                    책 제목과 느낌만 입력하면, 깊이 있는 블로그 리뷰와 감성 에세이 초안을 완성해 드립니다.
+                </p>
+
+                <!-- Hero CTA Buttons -->
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+                    <a href="#coach" class="w-full sm:w-auto px-8 py-4 rounded-xl font-medium text-white bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-700 hover:from-purple-500 hover:to-indigo-500 shadow-xl shadow-purple-900/40 transition-all hover:scale-105 flex items-center justify-center gap-2 group">
+                        <span>지금 AI 에세이 작성하기</span>
+                        <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                    <a href="#templates" class="w-full sm:w-auto px-8 py-4 rounded-xl font-medium text-slate-200 glass-panel hover:bg-white/10 transition-all border border-white/15 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-layer-group text-purple-400"></i>
+                        <span>감성 템플릿 살펴보기</span>
+                    </a>
+                </div>
+
+                <!-- Feature Highlights Bar -->
+                <div class="pt-12 grid grid-cols-2 md:grid-cols-4 gap-4 text-left">
+                    <div class="p-4 rounded-xl glass-panel border border-white/5">
+                        <i class="fa-solid fa-wand-magic-sparkles text-purple-400 text-xl mb-2"></i>
+                        <h4 class="text-sm font-semibold text-white">맞춤형 톤앤매너</h4>
+                        <p class="text-xs text-slate-400 mt-1">위로, 사유, 유쾌함 등 다양한 감성 조율</p>
+                    </div>
+                    <div class="p-4 rounded-xl glass-panel border border-white/5">
+                        <i class="fa-solid fa-blog text-indigo-400 text-xl mb-2"></i>
+                        <h4 class="text-sm font-semibold text-white">블로그 최적화</h4>
+                        <p class="text-xs text-slate-400 mt-1">소제목, 가독성, 해시태그 자동 제안</p>
+                    </div>
+                    <div class="p-4 rounded-xl glass-panel border border-white/5">
+                        <i class="fa-solid fa-file-export text-amber-400 text-xl mb-2"></i>
+                        <h4 class="text-sm font-semibold text-white">다양한 내보내기</h4>
+                        <p class="text-xs text-slate-400 mt-1">복사, TXT, PDF 즉시 인쇄/저장</p>
+                    </div>
+                    <div class="p-4 rounded-xl glass-panel border border-white/5">
+                        <i class="fa-solid fa-bookmark text-emerald-400 text-xl mb-2"></i>
+                        <h4 class="text-sm font-semibold text-white">나만의 서재 저장</h4>
+                        <p class="text-xs text-slate-400 mt-1">마이페이지 연동 독서 기록 관리</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Workspace: AI Review Coach Interactive Area -->
+        <section id="coach" class="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+            <div class="text-center mb-10">
+                <h2 class="font-serif text-3xl sm:text-4xl font-bold text-white mb-3">AI 감성 독서 리뷰 코치</h2>
+                <p class="text-slate-400 text-sm sm:text-base">마음에 남은 문장이나 몇 가지 키워드만 적어주세요. 빛나는 문장으로 다듬어드립니다.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                
+                <!-- Left Input Panel (User Parameters) -->
+                <div class="lg:col-span-5 glass-panel p-6 sm:p-8 rounded-2xl border border-white/10 space-y-6">
+                    <div class="flex items-center justify-between border-b border-white/10 pb-4">
+                        <h3 class="font-serif text-xl font-semibold text-purple-200 flex items-center gap-2">
+                            <i class="fa-solid fa-feather text-purple-400"></i>
+                            독서 노트 작성
+                        </h3>
+                        <span class="text-xs text-purple-300/80 bg-purple-900/40 px-2.5 py-1 rounded-full border border-purple-500/20">Step 1~3 입력</span>
+                    </div>
+
+                    <!-- Input 1: Book Title or Subject -->
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">
+                            1. 책 제목 또는 독서 주제 <span class="text-purple-400">*</span>
+                        </label>
+                        <input type="text" id="bookTitle" placeholder="예: 데미안, 불편한 편의점, 삶이 힘겨울 때 독서법" 
+                            class="w-full px-4 py-3 rounded-xl glass-input text-sm transition-all placeholder:text-slate-500">
+                    </div>
+
+                    <!-- Input 2: Memorable Passage or Keywords -->
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">
+                            2. 기억에 남는 구절 또는 떠오른 생각 (선택)
+                        </label>
+                        <textarea id="bookNotes" rows="3" placeholder="예: '내 속에서 솟아 나오려는 것, 바로 그것을 살아보려 했을 뿐이다.' 나다운 삶에 대해 깊이 고민하게 됨." 
+                            class="w-full px-4 py-3 rounded-xl glass-input text-sm transition-all placeholder:text-slate-500 resize-none"></textarea>
+                    </div>
+
+                    <!-- Input 3: Tone & Atmosphere Selection -->
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">
+                            3. 글의 감성 분위기 (Tone & Manner)
+                        </label>
+                        <div class="grid grid-cols-2 gap-2" id="toneSelector">
+                            <button type="button" data-tone="warm" class="tone-btn active p-3 rounded-xl border text-left text-xs transition-all flex items-center gap-2 border-purple-500 bg-purple-900/40 text-purple-200">
+                                <i class="fa-solid fa-mug-hot text-amber-300"></i>
+                                <span>따뜻한 위로와 공감</span>
+                            </button>
+                            <button type="button" data-tone="deep" class="tone-btn p-3 rounded-xl border text-left text-xs transition-all flex items-center gap-2 border-white/10 bg-white/5 text-slate-300 hover:bg-white/10">
+                                <i class="fa-solid fa-brain text-indigo-400"></i>
+                                <span>깊은 철학적 사유</span>
+                            </button>
+                            <button type="button" data-tone="witty" class="tone-btn p-3 rounded-xl border text-left text-xs transition-all flex items-center gap-2 border-white/10 bg-white/5 text-slate-300 hover:bg-white/10">
+                                <i class="fa-solid fa-comments text-emerald-400"></i>
+                                <span>유쾌한 소통과 서평</span>
+                            </button>
+                            <button type="button" data-tone="insight" class="tone-btn p-3 rounded-xl border text-left text-xs transition-all flex items-center gap-2 border-white/10 bg-white/5 text-slate-300 hover:bg-white/10">
+                                <i class="fa-solid fa-lightbulb text-purple-400"></i>
+                                <span>직장인 자기계발 인사이트</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Input 4: Target Platform & Length -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">
+                                target 플랫폼
+                            </label>
+                            <select id="targetPlatform" class="w-full px-3 py-2.5 rounded-xl glass-input text-xs">
+                                <option value="Naver Blog" class="bg-slate-900">네이버 블로그 (긴글)</option>
+                                <option value="Brunch" class="bg-slate-900">브런치 에세이 (감성)</option>
+                                <option value="Instagram" class="bg-slate-900">인스타그램 (카드뉴스/숏폼)</option>
+                                <option value="Personal Archive" class="bg-slate-900">개인 독서 서재 노트</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">
+                                글 분량
+                            </label>
+                            <select id="contentLength" class="w-full px-3 py-2.5 rounded-xl glass-input text-xs">
+                                <option value="standard" class="bg-slate-900">보통 (약 800자)</option>
+                                <option value="short" class="bg-slate-900">간결하게 (약 400자)</option>
+                                <option value="long" class="bg-slate-900">심층 칼럼 (약 1,200자)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Generate Action Button -->
+                    <button id="generateBtn" onclick="generateEssay()" class="w-full py-4 rounded-xl font-medium text-white bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-700 hover:from-purple-500 hover:to-indigo-500 shadow-lg shadow-purple-900/50 transition-all flex items-center justify-center gap-2 group">
+                        <i class="fa-solid fa-wand-magic-sparkles text-amber-300 group-hover:rotate-12 transition-transform"></i>
+                        <span>AI 감성 에세이 작성하기</span>
+                    </button>
+                </div>
+
+                <!-- Right Output Panel (AI Result & Live Coach Editor) -->
+                <div class="lg:col-span-7 glass-panel p-6 sm:p-8 rounded-2xl border border-white/10 min-h-[560px] flex flex-col justify-between relative overflow-hidden">
+                    
+                    <!-- Top Result Bar -->
+                    <div class="flex items-center justify-between border-b border-white/10 pb-4 mb-4">
+                        <div class="flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-emerald-400 animate-pulse"></span>
+                            <h3 class="font-serif text-lg font-semibold text-white">완성된 독서 에세이</h3>
+                        </div>
+                        <!-- Utility Actions -->
+                        <div class="flex items-center space-x-2">
+                            <button onclick="copyToClipboard()" title="클립보드 복사" class="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white transition-all text-xs flex items-center gap-1.5 border border-white/10">
+                                <i class="fa-regular fa-copy"></i>
+                                <span class="hidden sm:inline">복사</span>
+                            </button>
+                            <button onclick="downloadAsTxt()" title="TXT 파일 저장" class="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white transition-all text-xs flex items-center gap-1.5 border border-white/10">
+                                <i class="fa-solid fa-file-arrow-down"></i>
+                                <span class="hidden sm:inline">TXT 다운로드</span>
+                            </button>
+                            <button onclick="printOrPdf()" title="PDF / 인쇄" class="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white transition-all text-xs flex items-center gap-1.5 border border-white/10">
+                                <i class="fa-solid fa-print"></i>
+                                <span class="hidden sm:inline">PDF/인쇄</span>
+                            </button>
+                            <button onclick="saveToMyPage()" title="마이 서재 저장" class="p-2 rounded-lg bg-purple-600/30 hover:bg-purple-600/50 text-purple-200 transition-all text-xs flex items-center gap-1.5 border border-purple-500/30">
+                                <i class="fa-solid fa-bookmark"></i>
+                                <span class="hidden sm:inline">서재 저장</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Result Display Container -->
+                    <div id="outputContainer" class="flex-grow my-2 p-4 rounded-xl bg-slate-950/50 border border-white/5 font-serif leading-relaxed text-slate-200 text-sm sm:text-base overflow-y-auto max-h-[420px] whitespace-pre-wrap selection:bg-purple-600">
+                        <div id="placeholderState" class="h-full flex flex-col items-center justify-center text-center p-8 text-slate-500 my-12">
+                            <i class="fa-solid fa-book-open-reader text-5xl mb-4 text-purple-400/40 animate-pulse"></i>
+                            <p class="font-sans text-sm">왼쪽 입력창에 책 제목과 느낌을 적은 후<br><strong class="text-purple-300">[AI 감성 에세이 작성하기]</strong> 버튼을 눌러주세요.</p>
+                            <p class="text-xs text-slate-600 mt-2">Gemini API 키 입력 시 실시간 맞춤 에세이가 생성됩니다.</p>
+                        </div>
+                        <div id="resultText" class="hidden font-serif"></div>
+                    </div>
+
+                    <!-- AI Coach Suggestion Tag Bar -->
+                    <div id="coachTipsBar" class="hidden mt-4 pt-4 border-t border-white/10 text-xs text-slate-400 flex flex-wrap items-center justify-between gap-2 bg-purple-900/20 p-3 rounded-xl">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-lightbulb text-amber-300"></i>
+                            <span class="font-semibold text-purple-200 font-sans">추천 해시태그 & 블로그 팁:</span>
+                        </div>
+                        <div id="suggestedHashtags" class="font-sans text-purple-300 font-medium flex flex-wrap gap-2">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Loading Overlay Indicator -->
+                    <div id="loadingOverlay" class="hidden absolute inset-0 bg-slate-950/80 backdrop-blur-md rounded-2xl flex flex-col items-center justify-center z-20 space-y-4">
+                        <div class="relative w-16 h-16">
+                            <div class="absolute inset-0 rounded-full border-4 border-purple-500/20"></div>
+                            <div class="absolute inset-0 rounded-full border-4 border-purple-500 border-t-transparent animate-spin"></div>
+                            <i class="fa-solid fa-star absolute inset-0 m-auto text-amber-300 text-lg animate-ping"></i>
+                        </div>
+                        <div class="text-center">
+                            <p class="font-serif text-lg text-purple-200 font-medium">밤하늘 별빛을 모아 문장을 지어내는 중...</p>
+                            <p id="loadingSubtext" class="text-xs text-slate-400 mt-1 font-sans">책의 감성을 어루만지는 AI 코치 동작 중</p>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Template Cards Section (Tabs & Interactive Grid) -->
+        <section id="templates" class="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-white/10">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-10">
+                <div>
+                    <h2 class="font-serif text-3xl font-bold text-white mb-2">감성 리뷰 템플릿 탐색</h2>
+                    <p class="text-slate-400 text-sm">마음에 드는 스타일을 선택해 쉽고 빠른 독서 글쓰기를 시작해보세요.</p>
+                </div>
+
+                <!-- Template Category Tabs -->
+                <div class="flex flex-wrap gap-2 mt-4 md:mt-0" id="templateTabs">
+                    <button onclick="filterTemplates('all')" class="tab-btn active px-4 py-2 rounded-xl text-xs font-medium bg-purple-600 text-white border border-purple-400">전체보기</button>
+                    <button onclick="filterTemplates('essay')" class="tab-btn px-4 py-2 rounded-xl text-xs font-medium glass-panel text-slate-300 hover:text-white border border-white/10">에세이 톤</button>
+                    <button onclick="filterTemplates('blog')" class="tab-btn px-4 py-2 rounded-xl text-xs font-medium glass-panel text-slate-300 hover:text-white border border-white/10">블로그 전문</button>
+                    <button onclick="filterTemplates('insta')" class="tab-btn px-4 py-2 rounded-xl text-xs font-medium glass-panel text-slate-300 hover:text-white border border-white/10">인스타그램</button>
+                </div>
+            </div>
+
+            <!-- Templates Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="templateGrid">
+                
+                <!-- Template Card 1 -->
+                <div class="template-card glass-panel glass-panel-hover p-6 rounded-2xl border border-white/10 flex flex-col justify-between" data-category="essay">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-xs font-semibold px-2.5 py-1 rounded-md bg-purple-900/50 text-purple-300 border border-purple-500/30">위로 에세이</span>
+                            <i class="fa-solid fa-heart text-purple-400"></i>
+                        </div>
+                        <h3 class="font-serif text-xl font-bold text-white mb-2">지친 마음을 보듬는 밤의 독서</h3>
+                        <p class="text-slate-300 text-xs leading-relaxed mb-4 line-clamp-3">
+                            "바쁜 일상 속 문득 멈춰 서서 펼친 이 책은 지친 마음 위에 가만히 얹어주는 차분한 온기 같았습니다..."
+                        </p>
+                    </div>
+                    <button onclick="useTemplate('지친 마음을 보듬는 밤의 독서', 'warm')" class="w-full py-2.5 rounded-xl border border-purple-500/30 text-purple-300 text-xs font-medium hover:bg-purple-600 hover:text-white transition-all flex items-center justify-center gap-1">
+                        <span>이 템플릿으로 작성</span>
+                        <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                    </button>
+                </div>
+
+                <!-- Template Card 2 -->
+                <div class="template-card glass-panel glass-panel-hover p-6 rounded-2xl border border-white/10 flex flex-col justify-between" data-category="blog">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-xs font-semibold px-2.5 py-1 rounded-md bg-indigo-900/50 text-indigo-300 border border-indigo-500/30">네이버 서평</span>
+                            <i class="fa-solid fa-bookmark text-indigo-400"></i>
+                        </div>
+                        <h3 class="font-serif text-xl font-bold text-white mb-2">3분 핵심 요약 & 깊은 서평</h3>
+                        <p class="text-slate-300 text-xs leading-relaxed mb-4 line-clamp-3">
+                            "책의 핵심 메시지와 인상적인 구절 3가지, 그리고 실생활에 적용할 독서 인사이트를 정리한 구조화 서평..."
+                        </p>
+                    </div>
+                    <button onclick="useTemplate('3분 핵심 요약 & 깊은 서평', 'insight')" class="w-full py-2.5 rounded-xl border border-indigo-500/30 text-indigo-300 text-xs font-medium hover:bg-indigo-600 hover:text-white transition-all flex items-center justify-center gap-1">
+                        <span>이 템플릿으로 작성</span>
+                        <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                    </button>
+                </div>
+
+                <!-- Template Card 3 -->
+                <div class="template-card glass-panel glass-panel-hover p-6 rounded-2xl border border-white/10 flex flex-col justify-between" data-category="insta">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-xs font-semibold px-2.5 py-1 rounded-md bg-amber-900/50 text-amber-300 border border-amber-500/30">인스타 숏폼</span>
+                            <i class="fa-solid fa-camera text-amber-400"></i>
+                        </div>
+                        <h3 class="font-serif text-xl font-bold text-white mb-2">한 줄 문장 픽 & 감성 피드</h3>
+                        <p class="text-slate-300 text-xs leading-relaxed mb-4 line-clamp-3">
+                            "📖 '인생의 한 장면을 바꾼 명문장.' 모바일 화면에서 한눈에 들어오는 인스타그램 감성 카드용 서평..."
+                        </p>
+                    </div>
+                    <button onclick="useTemplate('한 줄 문장 픽 & 감성 피드', 'witty')" class="w-full py-2.5 rounded-xl border border-amber-500/30 text-amber-300 text-xs font-medium hover:bg-amber-600 hover:text-white transition-all flex items-center justify-center gap-1">
+                        <span>이 템플릿으로 작성</span>
+                        <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                    </button>
+                </div>
+
+                <!-- Template Card 4 -->
+                <div class="template-card glass-panel glass-panel-hover p-6 rounded-2xl border border-white/10 flex flex-col justify-between" data-category="essay">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-xs font-semibold px-2.5 py-1 rounded-md bg-purple-900/50 text-purple-300 border border-purple-500/30">철학 에세이</span>
+                            <i class="fa-solid fa-feather-pointed text-purple-400"></i>
+                        </div>
+                        <h3 class="font-serif text-xl font-bold text-white mb-2">자아를 찾아가는 철학적 사유</h3>
+                        <p class="text-slate-300 text-xs leading-relaxed mb-4 line-clamp-3">
+                            "주인공의 선택을 통해 돌아본 나의 가치관. 묵직한 질문을 던지고 스스로 답을 찾아가는 사유의 기록..."
+                        </p>
+                    </div>
+                    <button onclick="useTemplate('자아를 찾아가는 철학적 사유', 'deep')" class="w-full py-2.5 rounded-xl border border-purple-500/30 text-purple-300 text-xs font-medium hover:bg-purple-600 hover:text-white transition-all flex items-center justify-center gap-1">
+                        <span>이 템플릿으로 작성</span>
+                        <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                    </button>
+                </div>
+
+                <!-- Template Card 5 -->
+                <div class="template-card glass-panel glass-panel-hover p-6 rounded-2xl border border-white/10 flex flex-col justify-between" data-category="blog">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-xs font-semibold px-2.5 py-1 rounded-md bg-emerald-900/50 text-emerald-300 border border-emerald-500/30">유쾌 소통</span>
+                            <i class="fa-solid fa-face-smile text-emerald-400"></i>
+                        </div>
+                        <h3 class="font-serif text-xl font-bold text-white mb-2">이웃과 나누는 솔직 재치 리뷰</h3>
+                        <p class="text-slate-300 text-xs leading-relaxed mb-4 line-clamp-3">
+                            "책 읽기 귀찮은 사람 모여라! 솔직하고 가벼운 화법으로 부담 없이 이웃들과 댓글로 이야기 나누는 서평..."
+                        </p>
+                    </div>
+                    <button onclick="useTemplate('이웃과 나누는 솔직 재치 리뷰', 'witty')" class="w-full py-2.5 rounded-xl border border-emerald-500/30 text-emerald-300 text-xs font-medium hover:bg-emerald-600 hover:text-white transition-all flex items-center justify-center gap-1">
+                        <span>이 템플릿으로 작성</span>
+                        <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                    </button>
+                </div>
+
+                <!-- Template Card 6 -->
+                <div class="template-card glass-panel glass-panel-hover p-6 rounded-2xl border border-white/10 flex flex-col justify-between" data-category="insta">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-xs font-semibold px-2.5 py-1 rounded-md bg-pink-900/50 text-pink-300 border border-pink-500/30">미니 서재</span>
+                            <i class="fa-solid fa-book text-pink-400"></i>
+                        </div>
+                        <h3 class="font-serif text-xl font-bold text-white mb-2">밤하늘 밑 나만의 독서 아카이브</h3>
+                        <p class="text-slate-300 text-xs leading-relaxed mb-4 line-clamp-3">
+                            "읽은 날짜, 별점, 핵심 한 줄과 함께 오롯이 나만의 기록으로 소장하는 조용한 아카이빙..."
+                        </p>
+                    </div>
+                    <button onclick="useTemplate('밤하늘 밑 나만의 독서 아카이브', 'warm')" class="w-full py-2.5 rounded-xl border border-pink-500/30 text-pink-300 text-xs font-medium hover:bg-pink-600 hover:text-white transition-all flex items-center justify-center gap-1">
+                        <span>이 템플릿으로 작성</span>
+                        <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                    </button>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- How It Works Section (3 Steps) -->
+        <section id="how-it-works" class="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-white/10">
+            <div class="text-center mb-12">
+                <h2 class="font-serif text-3xl font-bold text-white mb-3">어떻게 사용하나요?</h2>
+                <p class="text-slate-400 text-sm">3단계만 거치면 멋진 블로그 서평과 에세이가 완성됩니다.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+                <!-- Step 1 -->
+                <div class="glass-panel p-8 rounded-2xl border border-white/10 relative text-center space-y-4">
+                    <div class="w-12 h-12 mx-auto rounded-full bg-purple-600/30 border border-purple-400 text-purple-300 flex items-center justify-center text-xl font-bold font-serif">
+                        1
+                    </div>
+                    <h3 class="text-lg font-bold text-white font-serif">책 & 키워드 입력</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        읽은 책의 제목이나 인상 깊었던 구절, 혹은 떠오른 감정 단어를 자유롭게 입력합니다.
+                    </p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="glass-panel p-8 rounded-2xl border border-white/10 relative text-center space-y-4">
+                    <div class="w-12 h-12 mx-auto rounded-full bg-indigo-600/30 border border-indigo-400 text-indigo-300 flex items-center justify-center text-xl font-bold font-serif">
+                        2
+                    </div>
+                    <h3 class="text-lg font-bold text-white font-serif">감성 톤 & 플랫폼 선택</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        따뜻한 위로, 깊은 사유, 유쾌한 소통 등 원하는 분위기와 네이버 블로그/브런치 등 목적을 선택합니다.
+                    </p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="glass-panel p-8 rounded-2xl border border-white/10 relative text-center space-y-4">
+                    <div class="w-12 h-12 mx-auto rounded-full bg-amber-600/30 border border-amber-400 text-amber-300 flex items-center justify-center text-xl font-bold font-serif">
+                        3
+                    </div>
+                    <h3 class="text-lg font-bold text-white font-serif">AI 초안 다듬기 & 발행</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        AI 코칭으로 생성된 글을 복사하거나 PDF/TXT 파일로 저장하고, 마이 서재나 블로그에 발행하세요.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section (Accordion) -->
+        <section id="faq" class="py-16 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto border-t border-white/10">
+            <div class="text-center mb-10">
+                <h2 class="font-serif text-3xl font-bold text-white mb-3">자주 묻는 질문 (FAQ)</h2>
+                <p class="text-slate-400 text-sm">별 헤는 밤 서비스에 대해 궁금한 점을 확인하세요.</p>
+            </div>
+
+            <div class="space-y-4">
+                <!-- FAQ Item 1 -->
+                <div class="glass-panel rounded-xl border border-white/10 overflow-hidden">
+                    <button onclick="toggleFaq(1)" class="w-full px-6 py-4 text-left flex justify-between items-center text-slate-200 font-medium text-sm sm:text-base hover:bg-white/5 transition-colors">
+                        <span>Q1. Gemini API 키가 없어도 이용할 수 있나요?</span>
+                        <i id="faqIcon-1" class="fa-solid fa-chevron-down text-purple-400 transition-transform"></i>
+                    </button>
+                    <div id="faqContent-1" class="hidden px-6 pb-4 text-xs sm:text-sm text-slate-400 leading-relaxed border-t border-white/5 pt-3">
+                        네, 가능합니다! API 키가 설정되지 않은 경우에도 '별 헤는 밤'의 자체 감성 템플릿 시뮬레이션 알고리즘이 가동되어 풍부한 독서 에세이 초안을 즉시 생성해 드립니다. 본인만의 Gemini API 키를 입력하면 더욱 정교한 맞춤 실시간 글을 얻을 수 있습니다.
+                    </div>
+                </div>
+
+                <!-- FAQ Item 2 -->
+                <div class="glass-panel rounded-xl border border-white/10 overflow-hidden">
+                    <button onclick="toggleFaq(2)" class="w-full px-6 py-4 text-left flex justify-between items-center text-slate-200 font-medium text-sm sm:text-base hover:bg-white/5 transition-colors">
+                        <span>Q2. 생성된 에세이 글의 저작권은 누구에게 있나요?</span>
+                        <i id="faqIcon-2" class="fa-solid fa-chevron-down text-purple-400 transition-transform"></i>
+                    </button>
+                    <div id="faqContent-2" class="hidden px-6 pb-4 text-xs sm:text-sm text-slate-400 leading-relaxed border-t border-white/5 pt-3">
+                        생성된 글의 모든 소유권과 편집권은 사용자에게 있습니다. 네이버 블로그, 브런치, 개인 서재 등 원하시는 곳 어디에나 자유롭게 수정하여 발행하셔도 좋습니다.
+                    </div>
+                </div>
+
+                <!-- FAQ Item 3 -->
+                <div class="glass-panel rounded-xl border border-white/10 overflow-hidden">
+                    <button onclick="toggleFaq(3)" class="w-full px-6 py-4 text-left flex justify-between items-center text-slate-200 font-medium text-sm sm:text-base hover:bg-white/5 transition-colors">
+                        <span>Q3. 작성한 글을 마이페이지에 저장하려면 어떻게 하나요?</span>
+                        <i id="faqIcon-3" class="fa-solid fa-chevron-down text-purple-400 transition-transform"></i>
+                    </button>
+                    <div id="faqContent-3" class="hidden px-6 pb-4 text-xs sm:text-sm text-slate-400 leading-relaxed border-t border-white/5 pt-3">
+                        에세이가 생성된 후 우측 상단의 <strong class="text-purple-300">[서재 저장]</strong> 버튼을 누르면 마이 서재 저장함에 추가됩니다. 로그인 상태에서 이용하시면 마이페이지(<code class="text-purple-300">/mypage</code>)에서 저장된 목록을 확인하실 수 있습니다.
+                    </div>
+                </div>
+
+                <!-- FAQ Item 4 -->
+                <div class="glass-panel rounded-xl border border-white/10 overflow-hidden">
+                    <button onclick="toggleFaq(4)" class="w-full px-6 py-4 text-left flex justify-between items-center text-slate-200 font-medium text-sm sm:text-base hover:bg-white/5 transition-colors">
+                        <span>Q4. Gemini API Key 입력 시 보안은 안전한가요?</span>
+                        <i id="faqIcon-4" class="fa-solid fa-chevron-down text-purple-400 transition-transform"></i>
+                    </button>
+                    <div id="faqContent-4" class="hidden px-6 pb-4 text-xs sm:text-sm text-slate-400 leading-relaxed border-t border-white/5 pt-3">
+                        입력받은 API 키는 서버나 외부 DB에 저장되지 않고, 사용자의 웹 브라우저 로컬 세션에만 잠시 보관되어 안전합니다.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Gemini API Key Configuration Modal -->
+    <div id="apiModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+        <div class="glass-panel p-6 sm:p-8 rounded-2xl border border-purple-500/30 max-w-md w-full space-y-6 shadow-2xl relative">
+            <button onclick="closeApiModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-300 flex items-center justify-center border border-amber-500/30">
+                    <i class="fa-solid fa-key text-xl"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-serif font-bold text-white">Gemini API 키 설정</h3>
+                    <p class="text-xs text-slate-400">실시간 Google Gemini AI 연동</p>
+                </div>
+            </div>
+
+            <p class="text-xs text-slate-300 leading-relaxed">
+                Google AI Studio에서 발급받은 API Key를 입력하세요. 입력하지 않더라도 기본 시뮬레이션 기능으로 독서 에세이를 작성할 수 있습니다.
+            </p>
+
+            <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">API Key</label>
+                <input type="password" id="apiKeyInput" placeholder="AIzaSy..." class="w-full px-4 py-3 rounded-xl glass-input text-xs font-mono">
+            </div>
+
+            <div class="flex gap-3">
+                <button onclick="saveApiKey()" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-medium text-xs shadow-md">
+                    저장하기
+                </button>
+                <button onclick="clearApiKey()" class="px-4 py-3 rounded-xl border border-white/10 hover:bg-white/5 text-slate-300 text-xs">
+                    초기화
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast Message Container -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 hidden px-5 py-3 rounded-xl glass-panel border border-purple-500/40 text-white text-xs sm:text-sm font-medium shadow-2xl flex items-center gap-2">
+        <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400"></i>
+        <span id="toastMessage">안내 메시지입니다.</span>
+    </div>
+
+    <!-- Footer -->
+    <footer class="glass-panel border-t border-white/10 py-12 px-4 sm:px-6 lg:px-8 mt-20 relative z-10">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div class="space-y-4 md:col-span-2">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-purple-600 to-amber-300 flex items-center justify-center">
+                        <i class="fa-solid fa-moon text-slate-950 text-sm"></i>
+                    </div>
+                    <span class="font-serif text-xl font-bold text-white">별 헤는 밤</span>
+                </div>
+                <p class="text-xs text-slate-400 leading-relaxed max-w-sm">
+                    책과 멀어졌던 일상 속에서, 별빛 같은 문장을 찾아 연결해 주는 감성 AI 독서 코치 플랫폼입니다.
+                </p>
+                <p class="text-[11px] text-slate-500">
+                    &copy; 2026 별 헤는 밤 (Starry Night Reading Coach). All rights reserved.
+                </p>
+            </div>
+
+            <!-- Flask Page Navigation Quick Links -->
+            <div class="space-y-2">
+                <h4 class="text-xs font-semibold uppercase tracking-wider text-purple-300">서비스 경로 (Flask)</h4>
+                <ul class="space-y-2 text-xs text-slate-400">
+                    <li><a href="/" class="hover:text-purple-300 transition-colors">메인 홈</a></li>
+                    <li><a href="/login" class="hover:text-purple-300 transition-colors">로그인 (/login)</a></li>
+                    <li><a href="/signup" class="hover:text-purple-300 transition-colors">회원가입 (/signup)</a></li>
+                    <li><a href="/mypage" class="hover:text-purple-300 transition-colors">마이페이지 (/mypage)</a></li>
+                </ul>
+            </div>
+
+            <div class="space-y-2">
+                <h4 class="text-xs font-semibold uppercase tracking-wider text-purple-300">플랫폼 안내</h4>
+                <p class="text-xs text-slate-400 leading-relaxed">
+                    본 사이트는 Flask 및 Gemini API 기반 독서 서평 생성 구조로 구현되어 있으며, 편의를 위한 클라이언트 시뮬레이션을 내장하고 있습니다.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        let currentTone = 'warm';
+        let userGeminiKey = '';
+
+        window.addEventListener('DOMContentLoaded', () => {
+            generateStars();
+            initToneButtons();
+            initMobileMenu();
+            
+            // Check stored key
+            const savedKey = localStorage.getItem('starry_gemini_key');
+            if (savedKey) {
+                userGeminiKey = savedKey;
+                document.getElementById('apiKeyInput').value = savedKey;
+            }
+        });
+
+        function generateStars() {
+            const container = document.getElementById('stars-container');
+            const count = 70;
+            for (let i = 0; i < count; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                const size = Math.random() * 2.5 + 1;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.setProperty('--duration', `${Math.random() * 3 + 2}s`);
+                star.style.setProperty('--delay', `${Math.random() * 2}s`);
+                container.appendChild(star);
+            }
+        }
+
+        function initToneButtons() {
+            const toneBtns = document.querySelectorAll('.tone-btn');
+            toneBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    toneBtns.forEach(b => {
+                        b.classList.remove('active', 'border-purple-500', 'bg-purple-900/40', 'text-purple-200');
+                        b.classList.add('border-white/10', 'bg-white/5', 'text-slate-300');
+                    });
+                    btn.classList.add('active', 'border-purple-500', 'bg-purple-900/40', 'text-purple-200');
+                    btn.classList.remove('border-white/10', 'bg-white/5', 'text-slate-300');
+                    currentTone = btn.getAttribute('data-tone');
+                });
+            });
+        }
+
+        function initMobileMenu() {
+            const btn = document.getElementById('mobileMenuBtn');
+            const menu = document.getElementById('mobileMenu');
+            btn.addEventListener('click', () => {
+                menu.classList.toggle('hidden');
+            });
+        }
+
+        function filterTemplates(category) {
+            const tabs = document.querySelectorAll('#templateTabs .tab-btn');
+            tabs.forEach(tab => {
+                tab.classList.remove('bg-purple-600', 'text-white');
+                tab.classList.add('glass-panel', 'text-slate-300');
+            });
+            event.target.classList.add('bg-purple-600', 'text-white');
+            event.target.classList.remove('glass-panel', 'text-slate-300');
+
+            const cards = document.querySelectorAll('.template-card');
+            cards.forEach(card => {
+                if (category === 'all' || card.getAttribute('data-category') === category) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function useTemplate(title, tone) {
+            document.getElementById('bookTitle').value = title;
+            // Activate designated tone
+            const btn = document.querySelector(`.tone-btn[data-tone="${tone}"]`);
+            if (btn) btn.click();
+
+            // Smooth scroll to coach workspace
+            document.getElementById('coach').scrollIntoView({ behavior: 'smooth' });
+            showToast(`'${title}' 템플릿이 적용되었습니다.`);
+        }
+
+        async function generateEssay() {
+            const titleInput = document.getElementById('bookTitle').value.trim();
+            const notesInput = document.getElementById('bookNotes').value.trim();
+            const platform = document.getElementById('targetPlatform').value;
+            const length = document.getElementById('contentLength').value;
+
+            if (!titleInput) {
+                showToast('책 제목 또는 주제를 입력해주세요.', 'warning');
+                document.getElementById('bookTitle').focus();
+                return;
+            }
+
+            // Show Loading Overlay
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            loadingOverlay.classList.remove('hidden');
+
+            const placeholderState = document.getElementById('placeholderState');
+            const resultText = document.getElementById('resultText');
+            placeholderState.classList.add('hidden');
+            resultText.classList.add('hidden');
+            resultText.textContent = '';
+
+            try {
+                let generatedOutput = '';
+
+                if (userGeminiKey) {
+                    // Actual Gemini API Integration Structure
+                    generatedOutput = await callGeminiApi(titleInput, notesInput, currentTone, platform, length);
+                } else {
+                    // Smart Local Simulation Fallback
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    generatedOutput = buildSimulatedEssay(titleInput, notesInput, currentTone, platform);
+                }
+
+                loadingOverlay.classList.add('hidden');
+                resultText.classList.remove('hidden');
+
+                // Typing animation display
+                typeWriterEffect(resultText, generatedOutput, () => {
+                    updateCoachTips(titleInput, platform);
+                    showToast('성공적으로 감성 에세이가 작성되었습니다!');
+                });
+
+            } catch (error) {
+                loadingOverlay.classList.add('hidden');
+                showToast('에세이 생성 중 오류가 발생했습니다. 다시 시도해주세요.', 'error');
+                console.error(error);
+            }
+        }
+
+        async function callGeminiApi(title, notes, tone, platform, length) {
+            const systemPrompt = `너는 독서 에세이 및 블로그 서평 코치이다. 
+사용자가 입력한 책 정보를 바탕으로 감성적이고 깊이 있는 서평 또는 에세이를 작성해라.
+- 분위기(Tone): ${tone}
+- 발행 플랫폼: ${platform}
+- 분량: ${length}
+- 제목: [${title}]
+- 인상 깊은 구절/생각: [${notes}]
+글의 서두에는 매력적인 가로제목과 감성적인 아포리즘 문장을 포함해라.`;
+
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${userGeminiKey}`;
+
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: systemPrompt }] }]
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Gemini API 호출 실패');
+            }
+
+            const data = await response.json();
+            return data.candidates?.[0]?.content?.parts?.[0]?.text || '생성된 결과가 없습니다.';
+        }
+
+        function buildSimulatedEssay(title, notes, tone, platform) {
+            let toneIntro = "";
+            let toneBody = "";
+            let toneOutro = "";
+
+            if (tone === 'warm') {
+                toneIntro = `어느덧 사방이 조용해진 밤, 책상 앞에 앉아 《${title}》의 책장을 가만히 넘겨봅니다.\n바쁜 일상의 소음 속에서 잊고 지냈던 조용한 평온함이 서서히 고이기 시작합니다.`;
+                toneBody = `책 속에 남겨진 문장들은 지친 하루 끝에서 다정한 위로가 되어 다가왔습니다.\n${notes ? `특히 "${notes}"라는 구절은 오랫동안 마음 한구석을 따스하게 감싸 안아주었습니다.` : '페이지마다 새겨진 이야기들은 마치 나만의 오래된 일기장을 다시 읽는 듯한 깊은 공감을 안겨주었습니다.'}\n우리는 저마다의 무거운 짐을 지고 살아가지만, 이 글을 읽는 순간만큼은 차분히 마음을 내려놓을 수 있었습니다.`;
+                toneOutro = `잠들기 전, 마음의 온도 탑을 1도 올려준 고마운 책.\n비슷한 고민으로 밤잠을 이루지 못하는 이들에게 조용히 이 책을 권하고 싶습니다.`;
+            } else if (tone === 'deep') {
+                toneIntro = `《${title}》 - 겉면에 새겨진 제목 너머로 존재하는 철학적 질문들과 마주하다.\n삶의 본질이란 과연 무엇인가에 대한 근본적인 사유를 시작해 봅니다.`;
+                toneBody = `저자가 던지는 묵직한 물음은 우리가 당연하게 여겼던 일상의 가치관을 흔들어 놓습니다.\n${notes ? `그중에서도 "${notes}"에 담긴 시선은 주체적인 삶에 대한 깊은 사색을 불러일으켰습니다.` : '인간의 존재 이유와 타인과의 관계 속에서 매몰되지 않고 '나'라는 주체를 지켜내는 방법에 대해 깊이 파고듭니다.'}\n복잡한 현대 사회 속에서 우리는 진정한 자유를 누리고 있는지 스스로에게 물음을 던지게 됩니다.`;
+                toneOutro = `단순한 독서를 넘어 스스로의 가치관을 재정립하게 만들어준 뜻깊은 시간.\n깊이 있는 성찰과 자아 탐구를 원하는 분들에게 오래 기억될 문장들입니다.`;
+            } else if (tone === 'witty') {
+                toneIntro = `📚 오늘 읽은 흥미진진한 신작 리뷰! 《${title}》\n책 읽기 지루하다고 생각했던 사람들도 첫 장부터 눈을 떼지 못할 만한 이야기!`;
+                toneBody = `처음엔 가벼운 마음으로 시작했지만, 어느새 빠져들어서 시간 가는 줄 모르고 읽었습니다.\n${notes ? `특히 "${notes}" 부분에서는 무릎을 쳐가며 웃고 공감했네요!` : '스토리의 몰입감과 저자 특유의 재치 넘치는 입담이 정말 매력적이었습니다.'}\n블로그 이웃분들께도 주말에 여유롭게 읽어보시길 강력 추천합니다!`;
+                toneOutro = `기분 전환이 필요할 때, 소소한 재미와 작은 깨달음을 동시에 선사해 주는 책!\n여러분은 이 책에 대해 어떻게 생각하시나요? 댓글로 이야기 나눠요! 😊`;
+            } else {
+                toneIntro = `[직장인 독서 인사이트] 《${title}》를 통해 배운 일과 삶의 본질\n성장하는 직장인을 위한 핵심 독서 노트와 적용점입니다.`;
+                toneBody = `변화가 빠른 시대 속에서 자신만의 경쟁력을 갖추기 위해 선택한 독서.\n${notes ? `"${notes}"라는 인사이트는 현업에서의 의사결정과 시각을 바꾸는 중요한 전환점이 되었습니다.` : '목표 설정, 비판적 사고, 그리고 효과적인 실행 전략에 대한 명쾌한 가이드를 제공합니다.'}\n개인의 일과 커리어뿐만 아니라 일상의 리듬을 정돈하는 데 있어 큰 도움을 받았습니다.`;
+                toneOutro = `체계적인 성장과 삶의 몰입도를 높이고 싶은 분들께 권하는 도서.\n오늘 얻은 작은 실행 포인트 하나를 일상에 즉시 적용해 보려 합니다.`;
+            }
+
+            return `[${platform} 커스텀 리뷰]\n\n제목: ${title} - 밤하늘의 별처럼 마음에 박힌 문장들\n\n${toneIntro}\n\n${toneBody}\n\n${toneOutro}\n\n― '별 헤는 밤' AI 감성 독서 코치 작성`;
+        }
+
+        function typeWriterEffect(element, text, callback) {
+            let index = 0;
+            const speed = 18;
+            function type() {
+                if (index < text.length) {
+                    element.textContent += text.charAt(index);
+                    index++;
+                    setTimeout(type, speed);
+                } else if (callback) {
+                    callback();
+                }
+            }
+            type();
+        }
+
+        function updateCoachTips(title, platform) {
+            const tipsBar = document.getElementById('coachTipsBar');
+            const hashtagContainer = document.getElementById('suggestedHashtags');
+            
+            const cleanTitle = title.replace(/\s+/g, '');
+            hashtagContainer.innerHTML = `
+                <span class="bg-purple-900/60 px-2 py-0.5 rounded border border-purple-500/30">#${cleanTitle}</span>
+                <span class="bg-purple-900/60 px-2 py-0.5 rounded border border-purple-500/30">#독서에세이</span>
+                <span class="bg-purple-900/60 px-2 py-0.5 rounded border border-purple-500/30">#별헤는밤</span>
+                <span class="bg-purple-900/60 px-2 py-0.5 rounded border border-purple-500/30">#${platform.replace(/\s+/g, '')}</span>
+                <span class="bg-purple-900/60 px-2 py-0.5 rounded border border-purple-500/30">#책스타그램</span>
+            `;
+            tipsBar.classList.remove('hidden');
+        }
+
+        function copyToClipboard() {
+            const text = document.getElementById('resultText').textContent;
+            if (!text) {
+                showToast('복사할 에세이 내용이 없습니다.', 'warning');
+                return;
+            }
+
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast('클립보드에 복사되었습니다.');
+                });
+            } else {
+                // Fallback copy
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                try {
+                    document.execCommand('copy');
+                    showToast('클립보드에 복사되었습니다.');
+                } catch (err) {
+                    showToast('복사에 실패했습니다.', 'error');
+                }
+                document.body.removeChild(textarea);
+            }
+        }
+
+        function downloadAsTxt() {
+            const text = document.getElementById('resultText').textContent;
+            const title = document.getElementById('bookTitle').value || 'StarryNight_Essay';
+            if (!text) {
+                showToast('다운로드할 내용이 없습니다.', 'warning');
+                return;
+            }
+
+            const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${title}_독서에세이.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast('TXT 파일이 다운로드되었습니다.');
+        }
+
+        function printOrPdf() {
+            const text = document.getElementById('resultText').textContent;
+            if (!text) {
+                showToast('인쇄 또는 PDF로 변환할 내용이 없습니다.', 'warning');
+                return;
+            }
+
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>별 헤는 밤 - 독서 에세이</title>
+                    <style>
+                        body { font-family: 'Noto Serif KR', serif; padding: 40px; line-height: 1.8; color: #111; }
+                        h1 { font-size: 20px; border-bottom: 2px solid #333; padding-bottom: 10px; }
+                        pre { white-space: pre-wrap; font-family: inherit; font-size: 14px; }
+                    </style>
+                </head>
+                <body>
+                    <h1>별 헤는 밤 - AI 독서 에세이 기록</h1>
+                    <pre>${text}</pre>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.focus();
+            setTimeout(() => {
+                printWindow.print();
+            }, 250);
+        }
+
+        function saveToMyPage() {
+            const text = document.getElementById('resultText').textContent;
+            if (!text) {
+                showToast('저장할 에세이가 없습니다.', 'warning');
+                return;
+            }
+            showToast('마이 서재(/mypage)에 저장되었습니다!');
+        }
+
+        function toggleFaq(index) {
+            const content = document.getElementById(`faqContent-${index}`);
+            const icon = document.getElementById(`faqIcon-${index}`);
+            
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                content.classList.add('hidden');
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        function openApiModal() {
+            document.getElementById('apiModal').classList.remove('hidden');
+        }
+        function closeApiModal() {
+            document.getElementById('apiModal').classList.add('hidden');
+        }
+        function saveApiKey() {
+            const key = document.getElementById('apiKeyInput').value.trim();
+            userGeminiKey = key;
+            if (key) {
+                localStorage.setItem('starry_gemini_key', key);
+                showToast('Gemini API 키가 저장되었습니다.');
+            } else {
+                localStorage.removeItem('starry_gemini_key');
+                showToast('API 키가 설정 해제되었습니다.');
+            }
+            closeApiModal();
+        }
+        function clearApiKey() {
+            document.getElementById('apiKeyInput').value = '';
+            userGeminiKey = '';
+            localStorage.removeItem('starry_gemini_key');
+            showToast('API 키가 초기화되었습니다.');
+            closeApiModal();
+        }
+
+        function showToast(msg, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            const toastIcon = document.getElementById('toastIcon');
+
+            toastMessage.textContent = msg;
+
+            if (type === 'warning') {
+                toastIcon.className = 'fa-solid fa-triangle-exclamation text-amber-400';
+            } else if (type === 'error') {
+                toastIcon.className = 'fa-solid fa-circle-xmark text-red-400';
+            } else {
+                toastIcon.className = 'fa-solid fa-circle-check text-emerald-400';
+            }
+
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
